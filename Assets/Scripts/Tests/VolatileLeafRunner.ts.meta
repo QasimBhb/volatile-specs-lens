@@ -1,0 +1,46 @@
+- !<AssetImportMetadata/b2d62d0a-4a10-4904-9447-b9689d9aa658>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 795b50c8-0689-4d89-b5be-847ca2334fcb
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 795b50c8-0689-4d89-b5be-847ca2334fcb
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 12dfbd35-78c6-4ed9-8044-c7278b5881d7
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/12dfbd35-78c6-4ed9-8044-c7278b5881d7>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: f93469bc-9fe4-4381-b83a-d85eea89fda1
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    scenarioId: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - scenarioId: ""
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @input string scenarioId {"hint":"ID of the LEAF scenario to run on start (see LeafIndex). Empty = run nothing."}'
