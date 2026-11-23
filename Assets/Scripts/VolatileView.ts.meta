@@ -1,0 +1,103 @@
+- !<AssetImportMetadata/f04db867-231b-41d5-8ff7-58beac03aaa3>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> e6102a23-c556-42cd-b1d0-dbf48c1c7bdf
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> e6102a23-c556-42cd-b1d0-dbf48c1c7bdf
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 69098956-9e98-43f8-9191-0c7e46063056
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/69098956-9e98-43f8-9191-0c7e46063056>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  VersionPrerelease: ""
+  UpdateOrder: 0
+  ComponentUid: ba448738-8655-41c2-8c35-db62adf12abc
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    boxMesh: false
+    cameraObject: false
+    chimeSound: false
+    clickSound: false
+    collapseSeconds: false
+    debugSteps: false
+    dressStandIns: false
+    dwellSeconds: false
+    gazeMarginDeg: false
+    laptop: false
+    phone: false
+    problemSound: false
+    router: false
+    scanRangeCm: false
+    uiMaterial: false
+    usb: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cameraObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      laptop: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      router: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      phone: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      usb: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      boxMesh: !<reference.RenderMesh> 00000000-0000-0000-0000-000000000000
+      uiMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      dwellSeconds: !<float> 1.000000
+      collapseSeconds: 1.750000
+      scanRangeCm: !<float> 200.000000
+      gazeMarginDeg: !<float> 4.000000
+      dressStandIns: true
+      clickSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      chimeSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      problemSound: !<reference.AudioTrackAsset> 00000000-0000-0000-0000-000000000000
+      debugSteps: ""
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"label", "label":"Volatile, version 2: state-based guidance"}'
+    - '// @ui {"widget":"separator"}'
+    - '// @ui {"widget":"group_start", "label":"Scene references"}'
+    - "// @input SceneObject cameraObject {\"hint\":\"Camera scene object. Its pose is the responder's gaze.\"}"
+    - '// @input SceneObject laptop {"hint":"Laptop LAP-01 stand-in (preview stand-in for object recognition)."}'
+    - '// @input SceneObject router {"hint":"Router NET-01 stand-in (preview stand-in for object recognition)."}'
+    - '// @input SceneObject phone {"hint":"Phone PH-01 stand-in (preview stand-in for object recognition)."}'
+    - '// @input SceneObject usb {"hint":"USB drive USB-01 stand-in (preview stand-in for object recognition)."}'
+    - '// @input Asset.RenderMesh boxMesh {"hint":"Unit box mesh used for the scan ring."}'
+    - '// @input Asset.Material uiMaterial {"hint":"Unlit material, cloned and tinted for the scan ring."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Gaze dwell (stands in for recognition)"}'
+    - '// @input float dwellSeconds = 1 {"hint":"Seconds of gaze on a device before its card opens.", "widget":"slider", "min":0.3, "max":3, "step":0.1}'
+    - '// @input float collapseSeconds = 1.75 {"hint":"Seconds of looking clearly away before the card collapses to the chip.", "widget":"slider", "min":0.5, "max":4, "step":0.05}'
+    - '// @input float scanRangeCm = 200 {"hint":"Maximum distance (cm) at which a device can be scanned.", "widget":"slider", "min":50, "max":400, "step":10}'
+    - '// @input float gazeMarginDeg = 4 {"hint":"Extra degrees around a device that still count as looking at it.", "widget":"slider", "min":0, "max":15, "step":0.5}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Stand-ins"}'
+    - '// @input bool dressStandIns = true {"hint":"Dim the stand-in shapes and add flat screens, so the interface is the brightest thing in view."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Sound"}'
+    - '// @input Asset.AudioTrackAsset clickSound {"hint":"Soft click played for each answer."}'
+    - '// @input Asset.AudioTrackAsset chimeSound {"hint":"Chime played when a device is finished and when the scene is secured."}'
+    - '// @input Asset.AudioTrackAsset problemSound {"hint":"Low, short tone played when an answer reveals a problem."}'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Developer"}'
+    - '// @input string debugSteps {"hint":"Actions replayed at start, for captures. Leave empty. Example: scan; look NET-01; a; look PH-01; a; a; b; away; log"}'
+    - '// @ui {"widget":"group_end"}'

@@ -466,6 +466,42 @@
     - !<own> 9e373d68-993f-4c8f-83a0-6644f1d9fefd
   Components:
     []
+- !<ScriptComponent/0fb6632a-016c-45ee-9d6d-d238d23adce8>
+  PrefabRemaps:
+    []
+  Name: VolatileView
+  Enabled: true
+  ScriptAsset: !<reference> e6102a23-c556-42cd-b1d0-dbf48c1c7bdf
+  ScriptInputsDefault:
+    dwellSeconds: true
+    collapseSeconds: true
+    scanRangeCm: true
+    gazeMarginDeg: true
+    dressStandIns: true
+    debugSteps: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      cameraObject: !<reference.SceneObject> 00000000-0000-0065-0000-000000000064
+      laptop: !<reference.SceneObject> d69c39a0-e4ff-47da-95b7-be48483c8cde
+      router: !<reference.SceneObject> 12642c3d-f0a3-496e-8054-1772f5792bef
+      phone: !<reference.SceneObject> fe5044b8-2da4-483d-9eaa-a340f5eddc38
+      usb: !<reference.SceneObject> e1c0a8e9-f451-4ea2-a033-a99a37766c4e
+      boxMesh: !<reference.RenderMesh> 02450586-6b09-4619-bfdc-fa2bf9bc4ee6
+      uiMaterial: !<reference.Material> 2c4ec777-2245-44c1-926a-906e4a2910c9
+      dwellSeconds: !<float> 1.000000
+      collapseSeconds: 1.750000
+      scanRangeCm: !<float> 200.000000
+      gazeMarginDeg: !<float> 4.000000
+      dressStandIns: true
+      clickSound: !<reference.AudioTrackAsset> 1045864c-7828-4b9b-ae15-e90d8606de9f
+      chimeSound: !<reference.AudioTrackAsset> 72f619a5-aad5-48bb-b61c-5ced8295da8c
+      problemSound: !<reference.AudioTrackAsset> 1689e0e0-2ffd-47bf-8273-e3550c8b42b8
+      debugSteps: ""
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/10f60da2-2196-40ad-9e72-8a6bc7e86f35>
   PrefabRemaps:
     []
@@ -2161,7 +2197,7 @@
   PrefabRemaps:
     []
   Name: VolatileController
-  Enabled: true
+  Enabled: false
   ScriptAsset: !<reference> d7e4fa7d-1bb2-4630-8ce9-257fb8ef2151
   ScriptInputsDefault:
     dwellSeconds: true
@@ -2970,8 +3006,8 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 42.000000, y: 0.000000, z: 18.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: -18.900000, y: 0.000000, z: -2.000000}
+    Rotation: {x: 0.000000, y: -90.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -3447,3 +3483,4 @@
     - !<own> e1c0a8e9-f451-4ea2-a033-a99a37766c4e
   Components:
     - !<own> a8d07d27-422a-457b-b0ac-ba6c08abeb9f
+    - !<own> 0fb6632a-016c-45ee-9d6d-d238d23adce8

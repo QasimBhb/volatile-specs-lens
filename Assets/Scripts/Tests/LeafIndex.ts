@@ -2,7 +2,9 @@ import {scenariosIndex} from "Leaf.lspkg/Scenarios/decorator/ScenarioIndexDecora
 import {ScenarioMetadata} from "Leaf.lspkg/Scenarios/scenario/ScenarioMetadata"
 import {CustodyEntryScenario} from "./CustodyEntryScenario"
 import {GazeDwellScenario} from "./GazeDwellScenario"
+import {RankingScenario} from "./RankingScenario"
 import {SceneSecuredScenario} from "./SceneSecuredScenario"
+import {StartAndScanScenario} from "./StartAndScanScenario"
 import {StartChipsScenario} from "./StartChipsScenario"
 import {StepOrderScenario} from "./StepOrderScenario"
 
@@ -18,6 +20,8 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "volatile-2-gaze-dwell-expands-laptop", typename: GazeDwellScenario.getTypeName()},
     {id: "volatile-3-done-completes-current-step-only", typename: StepOrderScenario.getTypeName()},
     {id: "volatile-4-custody-entry-per-done", typename: CustodyEntryScenario.getTypeName()},
-    {id: "volatile-5-scene-secured-banner", typename: SceneSecuredScenario.getTypeName()}
+    {id: "volatile-5-scene-secured-banner", typename: SceneSecuredScenario.getTypeName()},
+    {id: "v2-1-start-and-scan", typename: StartAndScanScenario.getTypeName()},
+    {id: "v2-3-ranking", typename: RankingScenario.getTypeName()}
   ]
 }
