@@ -8,7 +8,7 @@ status: approved
 
 A Lens for digital forensics first responders. At a scene with live devices (a laptop, a router, a phone, a USB drive), one wrong move destroys volatile evidence. Volatile asks a few state questions about each device, ranks the devices by urgency, puts the next safe steps and a "never do" warning on the device itself, and logs every answer to a timestamped chain of custody.
 
-Version 2 replaces version 1's fixed rank (laptop #1 to USB #4). The research found that every first-responder standard read in full branches on device state (on or off, locked or unlocked), not device type. Source for all rules below: `notes/reports/Volatile forensics Lens research.md`.
+Version 2 replaces version 1's fixed rank (laptop #1 to USB #4). The research found that every first-responder standard read in full branches on device state (on or off, locked or unlocked), not device type. Source for all rules below: `devpost/research.md`.
 
 ## The one spatial moment
 Gloves on, about a meter from the desk, I look at a device I haven't assessed. After about 1 second a ring traces around it and a question card opens beside it with two big pinch buttons: **On / Off**, then **Locked / Unlocked**, then **Being wiped? Yes / No**. When I answer, its grey "?" chip becomes a rank among the assessed devices with a one-line reason ("#1: on and unlocked, could lock"), and the other chips re-sort. Step cards open where the question card was, with a red "never do" strip on the device's tag. Each step asks me for a fact, not a tick ("Signal in bag: None / Still showing"), and my answer is logged with the time.

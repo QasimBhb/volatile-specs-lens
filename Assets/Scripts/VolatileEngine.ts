@@ -107,6 +107,8 @@ function pickProblemVariant(
       return variant
     }
   }
+  // Fallback when no `when` matches and no default variant (without `when`) is given.
+  // Unreachable with the shipped rules, where every conditional problem is exhaustive or has a default.
   return variants[0]
 }
 
@@ -190,7 +192,9 @@ export function createEngine(rules: Rules, clock: Clock): VolatileEngine {
     if (deviceOrder.length === 0) {
       return false
     }
-    return deviceOrder.every((dev) => isDeviceDone(dev))
+    return deviceOrder.every(
+      (dev) => dev.currentQuestionId === null && isDeviceDone(dev)
+    )
   }
 
   function computeSortedAssessed(): InternalDevice[] {
@@ -377,6 +381,7 @@ export function createEngine(rules: Rules, clock: Clock): VolatileEngine {
 
     getDevice(id: DeviceId): DeviceView {
       const dev = deviceMap.get(id)
+      // Read query throws on an unknown DeviceId; mutating methods treat unknown IDs as disallowed and return [].
       if (!dev) {
         throw new Error(String(id))
       }
@@ -414,9 +419,10 @@ export function createEngine(rules: Rules, clock: Clock): VolatileEngine {
       let clockLabel = ""
       let clockNote = ""
       if (stateDef.clock !== undefined && dev.clockStartMs !== null) {
+        const endMs = securedMs ?? clock.nowMs()
         clockSeconds = Math.max(
           0,
-          Math.floor((clock.nowMs() - dev.clockStartMs) / 1000)
+          Math.floor((endMs - dev.clockStartMs) / 1000)
         )
         clockLabel = stateDef.clock.label
         clockNote = stateDef.clock.note
@@ -553,11 +559,12 @@ export function createEngine(rules: Rules, clock: Clock): VolatileEngine {
         events.push({type: "ranks_changed"})
         if (isDeviceDone(dev)) {
           events.push({type: "device_done", deviceId: dev.def.id})
-          if (computeIsSceneSecured()) {
-            securedMs = clock.nowMs()
-            events.push({type: "scene_secured"})
-          }
         }
+      }
+
+      if (computeIsSceneSecured()) {
+        securedMs = clock.nowMs()
+        events.push({type: "scene_secured"})
       }
 
       return events
