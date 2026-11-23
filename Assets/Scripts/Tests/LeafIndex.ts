@@ -3,6 +3,7 @@ import {ScenarioMetadata} from "Leaf.lspkg/Scenarios/scenario/ScenarioMetadata"
 import {FactsAndProblemsScenario} from "./FactsAndProblemsScenario"
 import {GazeQuestionsScenario} from "./GazeQuestionsScenario"
 import {RankingScenario} from "./RankingScenario"
+import {ScenarioAndReassessScenario} from "./ScenarioAndReassessScenario"
 import {SceneSecuredScenario2} from "./SceneSecuredScenario2"
 import {StartAndScanScenario} from "./StartAndScanScenario"
 
@@ -18,6 +19,7 @@ export class LeafIndex extends BaseScriptComponent {
     {id: "v2-2-gaze-questions", typename: GazeQuestionsScenario.getTypeName()},
     {id: "v2-3-ranking", typename: RankingScenario.getTypeName()},
     {id: "v2-4-facts-and-problems", typename: FactsAndProblemsScenario.getTypeName()},
+    {id: "v2-5-scenario-and-reassess", typename: ScenarioAndReassessScenario.getTypeName()},
     {id: "v2-6-scene-secured", typename: SceneSecuredScenario2.getTypeName()}
   ]
 }

@@ -11,7 +11,7 @@
  *
  * Source of truth for behaviour and wording: devpost/design-brief.md.
  *
- * Revision 2 (2026-11-22). Changes from revision 1 are marked "r2". The numbered
+ * Revision 3 (2026-11-22). Changes are marked "r2" and "r3". The numbered
  * "Behaviour rules" above the engine interface are part of the contract.
  */
 
@@ -288,6 +288,15 @@ export type EngineEvent =
  * 11. Nudge. For an assessed device: the best-ranked other device that is assessed, not done and
  *     ranked above this one; otherwise null.
  * 12. getElapsedSeconds and clockSeconds are whole seconds (rounded down).
+ * 13. r3. A pending question blocks "Scene secured". The scene is secured only when every
+ *     device is assessed, no device has a pending question (none is being reassessed), and
+ *     every step of every device's current state is done. If the answer that ends a
+ *     reassessment is the last thing missing, that answerQuestion call emits scene_secured
+ *     after its other events. Once secured, clockSeconds stops counting, as
+ *     getElapsedSeconds does.
+ * 14. r3. Rule 10's "stays as it was during a reassessment" means the chip keeps following
+ *     the old state's steps while the questions are open; a scenario switch during a
+ *     reassessment can still reopen a step and change the chip.
  *
  * The view calls these methods and redraws everything from getDevice after any call that
  * returns events. Every method that changes anything returns the events it caused, in order.
@@ -314,7 +323,7 @@ export interface VolatileEngine {
   answerFact(id: DeviceId, answer: AnswerIndex): EngineEvent[]
 
   getLog(): LogEntry[]
-  /** True when every device is assessed and every step of its current state is done. */
+  /** True when every device is assessed, none has a pending question, and every step of its current state is done (r3, rule 13). */
   isSceneSecured(): boolean
   /** Seconds since the engine was created; frozen once the scene is secured. */
   getElapsedSeconds(): number
