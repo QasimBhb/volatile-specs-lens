@@ -80,8 +80,9 @@ type DeviceLayout = {
 const LAYOUT: {[id: string]: DeviceLayout} = {
   // Strip along the top edge of the lid; card to the right of the lid.
   "LAP-01": {tagCenter: new vec3(0, 28.6, -8.5), tagWidth: 33, markerSide: -1, cardBottom: new vec3(29, 2, -10), gazeCenter: new vec3(0, 11, -8), gazeRadius: 21},
-  // Tag above the antennas; card to the left (the router is at the end of the desk).
-  "NET-01": {tagCenter: new vec3(-4.5, 17.8, -5), tagWidth: 24, markerSide: -1, cardBottom: new vec3(-27, 4, -6), gazeCenter: new vec3(0, 6, 0), gazeRadius: 13},
+  // Tag above the antennas; card to the left (the router is at the end of the desk). The card must
+  // stay right of x = 16.5 on the desk, or the laptop's lid cuts across its left edge.
+  "NET-01": {tagCenter: new vec3(0, 17.8, -5), tagWidth: 24, markerSide: -1, cardBottom: new vec3(-22.5, 4, -6), gazeCenter: new vec3(0, 6, 0), gazeRadius: 13},
   // Marker over the phone, pill and strip running left; card to the right.
   "PH-01": {tagCenter: new vec3(-8.25, 6, -11), tagWidth: 24, markerSide: 1, cardBottom: new vec3(14.75, 2, -9), gazeCenter: new vec3(0, 2, 0), gazeRadius: 10},
   // Marker over the drive, pill and strip running right; card to the left.

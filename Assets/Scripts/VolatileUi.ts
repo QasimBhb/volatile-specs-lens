@@ -54,6 +54,7 @@ export type PanelOpts = {
 }
 
 export type UiButton = {
+  /** The holder. Move, show and hide this one; UI Kit animates the button inside it. */
   obj: SceneObject
   button: Button
   label: Text
@@ -192,7 +193,10 @@ export function setFitted(t: Text, str: string, w: number): void {
  * feedback come from UI Kit. `onPinch` runs once per pinch.
  */
 export function button(parent: SceneObject, name: string, label: string, w: number, h: number, pos: vec3, onPinch: () => void): UiButton {
-  const o = child(parent, name, pos)
+  // UI Kit moves the button's own object back and forth as it is pressed. A holder keeps that
+  // motion apart from the layout: moving the button itself mid-press leaves it sunk in the card.
+  const holder = child(parent, name + " Holder", pos)
+  const o = child(holder, name, new vec3(0, 0, 0))
   const btn = o.createComponent(Button.getTypeName()) as Button
   const size = new vec3(w, h, 1)
   btn.size = size
@@ -219,7 +223,7 @@ export function button(parent: SceneObject, name: string, label: string, w: numb
   })
   const t = text(o, name + " Label", label, T_BODY, true, WHITE, w - 1, h - 0.6, new vec3(0, 0, 0.2), HorizontalAlignment.Center, true)
   btn.onTriggerUp.add(onPinch)
-  return {obj: o, button: btn, label: t}
+  return {obj: holder, button: btn, label: t}
 }
 
 /** True once a UI Kit button has finished initialising. */
