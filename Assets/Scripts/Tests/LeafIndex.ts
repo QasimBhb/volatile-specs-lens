@@ -1,27 +1,23 @@
 import {scenariosIndex} from "Leaf.lspkg/Scenarios/decorator/ScenarioIndexDecorator"
 import {ScenarioMetadata} from "Leaf.lspkg/Scenarios/scenario/ScenarioMetadata"
-import {CustodyEntryScenario} from "./CustodyEntryScenario"
-import {GazeDwellScenario} from "./GazeDwellScenario"
+import {FactsAndProblemsScenario} from "./FactsAndProblemsScenario"
+import {GazeQuestionsScenario} from "./GazeQuestionsScenario"
 import {RankingScenario} from "./RankingScenario"
-import {SceneSecuredScenario} from "./SceneSecuredScenario"
+import {SceneSecuredScenario2} from "./SceneSecuredScenario2"
 import {StartAndScanScenario} from "./StartAndScanScenario"
-import {StartChipsScenario} from "./StartChipsScenario"
-import {StepOrderScenario} from "./StepOrderScenario"
 
 /**
  * LEAF scenarios for Volatile, one per done criterion in devpost/design-brief.md.
- * Run them in order on a freshly reset preview: they share the running Lens's state.
+ * Each one runs on a freshly reset preview and sets up the state it needs.
  */
 @component
 export class LeafIndex extends BaseScriptComponent {
   @scenariosIndex
   static scenariosIndex: ScenarioMetadata[] = [
-    {id: "volatile-1-start-chips", typename: StartChipsScenario.getTypeName()},
-    {id: "volatile-2-gaze-dwell-expands-laptop", typename: GazeDwellScenario.getTypeName()},
-    {id: "volatile-3-done-completes-current-step-only", typename: StepOrderScenario.getTypeName()},
-    {id: "volatile-4-custody-entry-per-done", typename: CustodyEntryScenario.getTypeName()},
-    {id: "volatile-5-scene-secured-banner", typename: SceneSecuredScenario.getTypeName()},
     {id: "v2-1-start-and-scan", typename: StartAndScanScenario.getTypeName()},
-    {id: "v2-3-ranking", typename: RankingScenario.getTypeName()}
+    {id: "v2-2-gaze-questions", typename: GazeQuestionsScenario.getTypeName()},
+    {id: "v2-3-ranking", typename: RankingScenario.getTypeName()},
+    {id: "v2-4-facts-and-problems", typename: FactsAndProblemsScenario.getTypeName()},
+    {id: "v2-6-scene-secured", typename: SceneSecuredScenario2.getTypeName()}
   ]
 }

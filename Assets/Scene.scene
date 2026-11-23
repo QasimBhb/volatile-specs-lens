@@ -7,7 +7,6 @@
     - !<own> fff71828-e79b-4bd0-85be-a14fc6dcf9d1
     - !<own> fae10c18-ab8f-41da-8c50-982727758846
     - !<own> c37c405c-369b-44ed-9c2b-b7c3e19fb046
-    - !<own> 57baa2d5-2cef-4f24-aff2-8f5dd05ff3f9
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       - id: 1
@@ -1230,21 +1229,6 @@
     - !<own> 46b79537-a269-46f1-9483-500d7a4170d6
   Components:
     []
-- !<SceneObject/57baa2d5-2cef-4f24-aff2-8f5dd05ff3f9>
-  PrefabRemaps:
-    []
-  Name: LookProof (throwaway)
-  Enabled: false
-  Layers: 1
-  LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    HasSegmentScaleCompensation: false
-  Children:
-    []
-  Components:
-    - !<own> e7f19755-6708-46a7-be0f-7ba2d163c69a
 - !<SceneObject/58ef319f-850e-40dd-8295-e6dc36ab4854>
   PrefabRemaps:
     []
@@ -2193,37 +2177,6 @@
     - !<own> 0c355300-e635-47c1-a8c3-5ddef30b8824
   Components:
     []
-- !<ScriptComponent/a8d07d27-422a-457b-b0ac-ba6c08abeb9f>
-  PrefabRemaps:
-    []
-  Name: VolatileController
-  Enabled: false
-  ScriptAsset: !<reference> d7e4fa7d-1bb2-4630-8ce9-257fb8ef2151
-  ScriptInputsDefault:
-    dwellSeconds: true
-    collapseSeconds: true
-    scanRangeCm: true
-    gazeMarginDeg: true
-  ScriptTypesDefault:
-    {}
-  ScriptInputs:
-    "":
-      cameraObject: !<reference.SceneObject> 00000000-0000-0065-0000-000000000064
-      laptop: !<reference.SceneObject> d69c39a0-e4ff-47da-95b7-be48483c8cde
-      router: !<reference.SceneObject> 12642c3d-f0a3-496e-8054-1772f5792bef
-      phone: !<reference.SceneObject> fe5044b8-2da4-483d-9eaa-a340f5eddc38
-      usb: !<reference.SceneObject> e1c0a8e9-f451-4ea2-a033-a99a37766c4e
-      boxMesh: !<reference.RenderMesh> 02450586-6b09-4619-bfdc-fa2bf9bc4ee6
-      uiMaterial: !<reference.Material> 2c4ec777-2245-44c1-926a-906e4a2910c9
-      dwellSeconds: !<float> 1.000000
-      collapseSeconds: 1.750000
-      scanRangeCm: !<float> 200.000000
-      gazeMarginDeg: !<float> 4.000000
-      clickSound: !<reference.AudioTrackAsset> 1045864c-7828-4b9b-ae15-e90d8606de9f
-      chimeSound: !<reference.AudioTrackAsset> 72f619a5-aad5-48bb-b61c-5ced8295da8c
-  ScriptTypes:
-    "":
-      {}
 - !<SceneObject/a98a7d22-28b9-4357-97cd-1486e721ac5d>
   PrefabRemaps:
     []
@@ -3090,22 +3043,6 @@
     - !<own> 0f983d21-20bc-4d89-a991-fbb95bacbd64
   Components:
     []
-- !<ScriptComponent/e7f19755-6708-46a7-be0f-7ba2d163c69a>
-  PrefabRemaps:
-    []
-  Name: VolatileLookProof
-  Enabled: true
-  ScriptAsset: !<reference> 888fcddb-2b58-46d6-951e-b8805c3e2c72
-  ScriptInputsDefault:
-    {}
-  ScriptTypesDefault:
-    {}
-  ScriptInputs:
-    "":
-      {}
-  ScriptTypes:
-    "":
-      {}
 - !<SceneObject/e9454e66-5d09-4a8a-bcd7-dea762326a48>
   PrefabRemaps:
     []
@@ -3482,5 +3419,4 @@
     - !<own> fe5044b8-2da4-483d-9eaa-a340f5eddc38
     - !<own> e1c0a8e9-f451-4ea2-a033-a99a37766c4e
   Components:
-    - !<own> a8d07d27-422a-457b-b0ac-ba6c08abeb9f
     - !<own> 0fb6632a-016c-45ee-9d6d-d238d23adce8
