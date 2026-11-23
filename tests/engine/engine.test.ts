@@ -1457,3 +1457,178 @@ describe("Done Criterion 6: Scene secured edges, pending-question gating (r3 Rul
     assert.equal(engine.getDevice("PH-01").clockSeconds, 60)
   })
 })
+
+describe("Mutation regression guards (claude-status.md items 1-6)", () => {
+  it("1. breaks ties strictly by assessment order, never by Rules.devices array order", () => {
+    // Rules.devices order is LAP-01 (0), NET-01 (1), PH-01 (2), USB-01 (3).
+    // Assess PH-01 (index 2) BEFORE LAP-01 (index 0) in Tier 3: PH-01 must rank #1!
+    {
+      const { engine } = makeSetup()
+      assessToState(engine, "PH-01", [0, 0, 1]) // phone.on.locked (Tier 3)
+      assessToState(engine, "LAP-01", [0, 0, 1]) // laptop.on.locked (Tier 3)
+      assert.deepEqual(
+        engine.getRanking().map((r) => r.deviceId),
+        ["PH-01", "LAP-01"],
+      )
+      assert.equal(engine.getDevice("PH-01").rank, 1)
+      assert.equal(engine.getDevice("LAP-01").rank, 2)
+    }
+
+    // Assess all 4 into Tier 5 in exact reverse of Rules.devices order: USB-01 -> PH-01 -> NET-01 -> LAP-01
+    {
+      const { engine } = makeSetup()
+      assessToState(engine, "USB-01", [0])
+      assessToState(engine, "PH-01", [1])
+      assessToState(engine, "NET-01", [1])
+      assessToState(engine, "LAP-01", [1])
+      assert.deepEqual(
+        engine.getRanking().map((r) => r.deviceId),
+        ["USB-01", "PH-01", "NET-01", "LAP-01"],
+      )
+    }
+  })
+
+  it("2. blocks 'done' chip and 'Scene secured' when a problem is open on a device's LAST step", () => {
+    const { engine } = makeSetup()
+
+    // Completely finish LAP-01, USB-01, and NET-01
+    assessToState(engine, "LAP-01", [0, 1, 1])
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0)
+    assert.equal(engine.getDevice("LAP-01").chip, "done")
+
+    assessToState(engine, "USB-01", [0])
+    engine.answerFact("USB-01", 0)
+    engine.answerFact("USB-01", 0)
+    engine.answerFact("USB-01", 0)
+    engine.answerFact("USB-01", 0)
+    assert.equal(engine.getDevice("USB-01").chip, "done")
+
+    assessToState(engine, "NET-01", [0])
+    engine.answerFact("NET-01", 0)
+    engine.answerFact("NET-01", 0)
+    engine.answerFact("NET-01", 0)
+    assert.equal(engine.getDevice("NET-01").chip, "done")
+
+    // On PH-01 (phone.on.locked), finish steps 1-3, then answer problem ("Waiting") on its LAST step (step 4)
+    assessToState(engine, "PH-01", [0, 0, 1])
+    engine.answerFact("PH-01", 0)
+    engine.answerFact("PH-01", 0)
+    engine.answerFact("PH-01", 0)
+    const lastStepProbEvents = engine.answerFact("PH-01", 1) // Handover: Waiting (problem on last step!)
+    assert.deepEqual(
+      lastStepProbEvents.map((e) => e.type),
+      ["logged", "problem"],
+    )
+    assert.equal(engine.getDevice("PH-01").chip, "in_progress")
+    assert.equal(engine.getDevice("PH-01").steps[3].problemOpen, true)
+    assert.equal(engine.getDevice("PH-01").steps[3].status, "active")
+    assert.equal(engine.isSceneSecured(), false)
+
+    // Resolving the last step's problem ("Done") finishes PH-01 and secures the scene
+    const closeEvents = engine.answerFact("PH-01", 0)
+    assert.deepEqual(
+      closeEvents.map((e) => e.type),
+      ["logged", "step_closed", "device_done", "scene_secured"],
+    )
+    assert.equal(engine.getDevice("PH-01").chip, "done")
+    assert.equal(engine.isSceneSecured(), true)
+  })
+
+  it("3. logs kind 'reassessed' (never 'assessed') on both same-state and changed-state reassessment", () => {
+    const { engine } = makeSetup()
+    assessToState(engine, "PH-01", [0, 0, 1])
+    assert.equal(engine.getLog().at(-1)?.kind, "assessed")
+
+    // Same-state reassessment
+    engine.beginReassess("PH-01")
+    const sameEv = assessToState(engine, "PH-01", [0, 0, 1])
+    assert.equal(engine.getLog().at(-1)?.kind, "reassessed")
+    assert.equal(sameEv[0].type, "logged")
+    if (sameEv[0].type === "logged") {
+      assert.equal(sameEv[0].entry.kind, "reassessed")
+    }
+
+    // Changed-state reassessment
+    engine.beginReassess("PH-01")
+    const diffEv = assessToState(engine, "PH-01", [1])
+    assert.equal(engine.getLog().at(-1)?.kind, "reassessed")
+    assert.equal(diffEv[0].type, "logged")
+    if (diffEv[0].type === "logged") {
+      assert.equal(diffEv[0].entry.kind, "reassessed")
+    }
+  })
+
+  it("4. keeps problemOpen === true on a 'locked' step when scenario switch moves network in front of it", () => {
+    const { engine } = makeSetup()
+    assessToState(engine, "LAP-01", [0, 1, 1])
+
+    engine.answerFact("LAP-01", 0) // Step 1 photo -> done
+    engine.answerFact("LAP-01", 1) // Step 2 look (Any visible: No) -> done
+    const callStepId = engine.getDevice("LAP-01").steps[2].id
+    engine.answerFact("LAP-01", 1) // Step 3 call (None free) -> open problem!
+    assert.equal(engine.getDevice("LAP-01").steps[2].problemOpen, true)
+
+    // Switch to ransomware: network moves to #2 (active), look is #3 (done), call moves to #4 ('locked'!)
+    engine.setScenario("ransomware")
+    const ran = engine.getDevice("LAP-01")
+    assert.equal(ran.activeStep, 1)
+    assert.equal(ran.steps[1].status, "active")
+    assert.equal(ran.steps[2].status, "done")
+    assert.equal(ran.steps[3].id, callStepId)
+    assert.equal(ran.steps[3].status, "locked")
+    assert.equal(ran.steps[3].problemOpen, true)
+    assert.equal(ran.steps[3].text, "Remove power at the device end, not the wall.")
+    assert.equal(ran.steps[3].fact, null)
+  })
+
+  it("5. does not reopen a completed or problem-open network step when setScenario is called with the current scenario", () => {
+    const { engine } = makeSetup()
+    assessToState(engine, "LAP-01", [0, 1, 1])
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0)
+    engine.answerFact("LAP-01", 0) // network step done in criminal!
+    assert.equal(engine.getDevice("LAP-01").chip, "done")
+    assert.equal(engine.getDevice("LAP-01").steps[3].status, "done")
+
+    // Calling setScenario("criminal") while already in criminal must NOT reopen network!
+    assertDisallowedNoOp(engine, () => engine.setScenario("criminal"))
+    assert.equal(engine.getDevice("LAP-01").chip, "done")
+    assert.equal(engine.getDevice("LAP-01").steps[3].status, "done")
+
+    // Switch to ransomware, open problem on network (#2), verify setScenario("ransomware") keeps problemOpen
+    engine.setScenario("ransomware")
+    engine.answerFact("LAP-01", 1) // Isolated: Can't -> open problem
+    assert.equal(engine.getDevice("LAP-01").steps[1].problemOpen, true)
+    assertDisallowedNoOp(engine, () => engine.setScenario("ransomware"))
+
+    // Close network (#2) in ransomware, verify setScenario("ransomware") keeps network done
+    engine.answerFact("LAP-01", 0) // Fallback: Switch cut -> done!
+    assert.equal(engine.getDevice("LAP-01").chip, "done")
+    assert.equal(engine.getDevice("LAP-01").steps[1].status, "done")
+    assertDisallowedNoOp(engine, () => engine.setScenario("ransomware"))
+  })
+
+  it("6. does not reset pending question to question 1 when beginReassess is called mid-way through FIRST assessment", () => {
+    const { engine } = makeSetup()
+
+    // Advance unassessed LAP-01 past Q1 ("On") to Q2 ("Locked" / "Unlocked")
+    engine.answerQuestion("LAP-01", 0)
+    const q2Id = engine.getDevice("LAP-01").question?.id
+    assert.notEqual(q2Id, VOLATILE_RULES.firstQuestion.laptop)
+    assert.deepEqual(engine.getDevice("LAP-01").question?.answers, ["Locked", "Unlocked"])
+
+    // beginReassess on an unassessed device mid-tree must be a complete no-op (stays on Q2!)
+    assertDisallowedNoOp(engine, () => engine.beginReassess("LAP-01"))
+    assert.equal(engine.getDevice("LAP-01").question?.id, q2Id)
+
+    // Advance to Q3 ("Being wiped?") and check again
+    engine.answerQuestion("LAP-01", 1)
+    assert.equal(engine.getDevice("LAP-01").question?.stem, "Being wiped?")
+    assertDisallowedNoOp(engine, () => engine.beginReassess("LAP-01"))
+    assert.equal(engine.getDevice("LAP-01").question?.stem, "Being wiped?")
+  })
+})
