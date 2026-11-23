@@ -81,7 +81,7 @@ const LAYOUT: {[id: string]: DeviceLayout} = {
   // Strip along the top edge of the lid; card to the right of the lid.
   "LAP-01": {tagCenter: new vec3(0, 28.6, -8.5), tagWidth: 33, markerSide: -1, cardBottom: new vec3(29, 2, -10), gazeCenter: new vec3(0, 11, -8), gazeRadius: 21},
   // Tag above the antennas; card to the left (the router is at the end of the desk).
-  "NET-01": {tagCenter: new vec3(0, 17.8, -5), tagWidth: 24, markerSide: -1, cardBottom: new vec3(-22.5, 4, -6), gazeCenter: new vec3(0, 6, 0), gazeRadius: 13},
+  "NET-01": {tagCenter: new vec3(-4.5, 17.8, -5), tagWidth: 24, markerSide: -1, cardBottom: new vec3(-27, 4, -6), gazeCenter: new vec3(0, 6, 0), gazeRadius: 13},
   // Marker over the phone, pill and strip running left; card to the right.
   "PH-01": {tagCenter: new vec3(-8.25, 6, -11), tagWidth: 24, markerSide: 1, cardBottom: new vec3(14.75, 2, -9), gazeCenter: new vec3(0, 2, 0), gazeRadius: 10},
   // Marker over the drive, pill and strip running right; card to the left.
@@ -98,7 +98,7 @@ const LABELS = {
   totalTime: "Total time",
   contested: "Contested",
   reassess: "Reassess",
-  scenario: "SCENARIO"
+  scenario: "SCENARIO · PINCH TO SWITCH"
 }
 
 const MARKER = 5.6
@@ -554,11 +554,11 @@ export class VolatileView extends BaseScriptComponent {
 
   /** Log chip on the desk's front-left corner; the list opens beside it. */
   private buildLog(): void {
-    this.logChip = button(this.uiRoot, "LogChip", LABELS.log, BTN_W, BTN_H, new vec3(-52, 4, 25), () => this.toggleLog())
+    this.logChip = button(this.uiRoot, "LogChip", LABELS.log, BTN_W, BTN_H, new vec3(-42, 4, 25), () => this.toggleLog())
     this.facers.push(this.logChip.obj.getTransform())
 
     const h = 4.4 + LOG_LINES * LINE_CAPTION + 1
-    this.logRoot = child(this.uiRoot, "CustodyLog", new vec3(-43, 9, 12))
+    this.logRoot = child(this.uiRoot, "CustodyLog", new vec3(-42, 9, 12))
     this.logRoot.createComponent("Component.Canvas")
     this.facers.push(this.logRoot.getTransform())
     panel(this.logRoot, "Log Plate", LOG_W, h, new vec3(0, h / 2, 0), {gradient: [PLATE_A, PLATE_B], border: PLATE_EDGE, borderSize: 0.1, radius: 1.2})
@@ -574,7 +574,7 @@ export class VolatileView extends BaseScriptComponent {
   private buildScenarioToggle(): void {
     const w = 18
     const h = 9
-    const root = child(this.uiRoot, "ScenarioPanel", new vec3(47, 6.5, 23))
+    const root = child(this.uiRoot, "ScenarioPanel", new vec3(43, 6.5, 24))
     root.createComponent("Component.Canvas")
     this.facers.push(root.getTransform())
     panel(root, "Scenario Plate", w, h, new vec3(0, 0, 0), {gradient: [PLATE_A, PLATE_B], border: PLATE_EDGE, borderSize: 0.1, radius: 1.2})
@@ -629,7 +629,7 @@ export class VolatileView extends BaseScriptComponent {
     const state = (id: DeviceId) => this.engine.getDevice(id).stateId
     if (this.laptopFace) this.laptopFace.enabled = state("LAP-01") !== "laptop.off"
     if (this.phoneFace) this.phoneFace.enabled = state("PH-01") !== "phone.off"
-    if (this.phoneLockHint) this.phoneLockHint.enabled = state("PH-01") !== "phone.on.unlocked"
+    if (this.phoneLockHint) this.phoneLockHint.enabled = state("PH-01") === null || state("PH-01") === "phone.on.locked"
     if (this.routerLights) this.routerLights.enabled = state("NET-01") !== "router.off"
   }
 
@@ -916,7 +916,8 @@ export class VolatileView extends BaseScriptComponent {
         const denom = dir.dot(normal)
         if (Math.abs(denom) < 0.0001) continue
         const k = p.sub(cam).dot(normal) / denom
-        if (k <= 0 || k >= 1) continue
+        // In front of the card or behind it: either way the two would overlap in view.
+        if (k <= 0) continue
         const hit = cam.add(dir.uniformScale(k)).sub(p)
         const x = hit.dot(right)
         const y = hit.dot(up)
@@ -934,6 +935,26 @@ export class VolatileView extends BaseScriptComponent {
     const camPos = this.camTransform.getWorldPosition()
     const camDir = this.camTransform.getWorldRotation().multiplyVec3(new vec3(0, 0, -1))
     const margin = (this.gazeMarginDeg * Math.PI) / 180
+
+    // An open card wins: while the gaze ray lands on it, a device behind it cannot take over.
+    const open = this.openDev
+    if (open) {
+      const ct = open.cardRoot.getTransform()
+      const p = ct.getWorldPosition()
+      const rot = ct.getWorldRotation()
+      const normal = rot.multiplyVec3(vec3.forward())
+      const denom = camDir.dot(normal)
+      if (Math.abs(denom) > 0.0001) {
+        const k = p.sub(camPos).dot(normal) / denom
+        if (k > 0) {
+          const hit = camPos.add(camDir.uniformScale(k)).sub(p)
+          const x = hit.dot(rot.multiplyVec3(vec3.right()))
+          const y = hit.dot(rot.multiplyVec3(vec3.up()))
+          if (Math.abs(x) < CARD_W / 2 + 2 && y > -2 && y < open.cardHeight + 2) return open
+        }
+      }
+    }
+
     let best: DeviceUI | null = null
     let bestScore = 1
     for (const dev of this.devices) {
